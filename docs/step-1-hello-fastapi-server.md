@@ -9,6 +9,7 @@ By the end of this step, you should be able to:
 - Write a minimal FastAPI app
 - Create simple API endpoints
 - Run the server locally using Uvicorn
+- Use `uv run` to run commands inside the project environment
 - Open the API in a browser
 - Test the API using FastAPI’s built-in `/docs` page
 
@@ -18,15 +19,25 @@ By the end of this step, you should be able to:
 
 Make sure you completed Step 0.
 
-Your project folder should look like this:
+Your project folder should look something like this:
 
 ```text
 mini-notes-server/
   README.md
   main.py
+  pyproject.toml
+  uv.lock
+  docs/
+    step-1-hello-fastapi-server.md
 ```
 
-You should also have a Python virtual environment named `.venv`.
+You may also see:
+
+```text
+.venv/
+```
+
+That is the local virtual environment managed by `uv`.
 
 Before starting, open your terminal in the project folder:
 
@@ -34,27 +45,15 @@ Before starting, open your terminal in the project folder:
 cd mini-notes-server
 ```
 
-Activate the virtual environment.
+You do not need to manually activate the virtual environment.
 
-On Mac or Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-On Windows:
+Instead, we will use:
 
 ```bash
-.venv\Scripts\activate
+uv run
 ```
 
-You should see something like this in your terminal:
-
-```text
-(.venv) $
-```
-
-This means the virtual environment is active.
+`uv run` runs commands inside the project’s managed Python environment.
 
 ---
 
@@ -62,7 +61,7 @@ This means the virtual environment is active.
 
 Open `main.py`.
 
-Add the following code:
+Replace its contents with the following code:
 
 ```python
 from fastapi import FastAPI
@@ -195,14 +194,14 @@ So when the client requests `/hello`, FastAPI runs the `hello()` function.
 
 ---
 
-# 4. Run the Server
+# 4. Run the Server with uv
 
-In the terminal, make sure you are inside the project folder and the virtual environment is active.
+In the terminal, make sure you are inside the project folder.
 
 Run:
 
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 You should see output similar to this:
@@ -216,15 +215,21 @@ This means your server is running locally.
 
 ---
 
-# 5. Understand the Uvicorn Command
+# 5. Understand the Command
 
 The command is:
 
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 Here is what each part means:
+
+```text
+uv run
+```
+
+Runs the command inside the project’s Python environment managed by `uv`.
 
 ```text
 uvicorn
@@ -253,8 +258,9 @@ Automatically restarts the server when you change your code.
 So this command means:
 
 ```text
-Run the FastAPI app named app from the main.py file,
-and restart automatically when the code changes.
+Use uv to run Uvicorn.
+Run the FastAPI app named app from the main.py file.
+Restart automatically when the code changes.
 ```
 
 ---
@@ -364,7 +370,7 @@ The server only responds to requests while the server program is running.
 Start the server again:
 
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 Now open:
@@ -413,38 +419,34 @@ You should see the updated message.
 
 # 12. Common Problems
 
-## Problem: `uvicorn: command not found`
+## Problem: `uv: command not found`
 
-This may mean Uvicorn is not installed or your virtual environment is not active.
+This means `uv` is not installed or your terminal cannot find it.
 
-Try:
-
-```bash
-source .venv/bin/activate
-```
-
-On Windows:
+Check:
 
 ```bash
-.venv\Scripts\activate
+uv --version
 ```
 
-Then reinstall:
-
-```bash
-pip install fastapi uvicorn
-```
+If that does not work, install `uv` and reopen the terminal.
 
 ---
 
-## Problem: `ModuleNotFoundError: No module named 'fastapi'`
+## Problem: `No module named 'fastapi'`
 
-This means FastAPI is not installed in the current Python environment.
+This usually means FastAPI was not added to the project.
 
-Make sure the virtual environment is active, then run:
+Run:
 
 ```bash
-pip install fastapi uvicorn
+uv add fastapi uvicorn
+```
+
+Then try again:
+
+```bash
+uv run uvicorn main:app --reload
 ```
 
 ---
@@ -462,7 +464,7 @@ Uvicorn running on http://127.0.0.1:8000
 If the server is not running, start it again:
 
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 ---
@@ -482,7 +484,7 @@ Ctrl + C
 Then restart it:
 
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 ---
@@ -496,7 +498,7 @@ You are done with Step 1 if you completed the following:
 [ ] Created a FastAPI app object
 [ ] Created GET /health endpoint
 [ ] Created GET /hello endpoint
-[ ] Ran the server using uvicorn
+[ ] Ran the server using uv run uvicorn
 [ ] Opened /health in the browser
 [ ] Opened /hello in the browser
 [ ] Opened /docs
@@ -515,12 +517,13 @@ Before moving to Step 2, make sure you can answer these questions:
 1. What is a server?
 2. What does FastAPI do?
 3. What does Uvicorn do?
-4. What does app = FastAPI() mean?
-5. What does @app.get("/hello") mean?
-6. What happens when the browser visits /hello?
-7. Why does the server stop responding after you press Ctrl + C?
-8. What is the purpose of the /docs page?
-9. What does --reload do?
+4. What does uv do in this project?
+5. What does app = FastAPI() mean?
+6. What does @app.get("/hello") mean?
+7. What happens when the browser visits /hello?
+8. Why does the server stop responding after you press Ctrl + C?
+9. What is the purpose of the /docs page?
+10. What does --reload do?
 ```
 
 ---
@@ -541,6 +544,8 @@ When the browser sends a request, FastAPI runs the matching function.
 The function returns data, usually as JSON.
 
 Uvicorn is used to run the FastAPI app.
+
+uv is used to manage the project environment and run commands.
 
 The server only works while Uvicorn is running.
 ```
