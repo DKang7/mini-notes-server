@@ -17,6 +17,7 @@ By working through this project, you will learn:
 - How to create and run a simple Python web server
 - How a browser or client sends requests to a server
 - How the server returns JSON responses
+- How to manage a Python project using `uv`
 - How to organize a small backend project
 
 ---
@@ -121,20 +122,67 @@ Uvicorn = the server runner that starts the FastAPI app
 Later, we will run the server with:
 
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
+
+---
+
+## What Is uv?
+
+`uv` is a modern Python project and package management tool.
+
+In this project, we will use `uv` to:
+
+- Create the Python project structure
+- Manage dependencies
+- Create and manage the virtual environment automatically
+- Run Python commands inside the project environment
+
+Instead of manually running:
+
+```bash
+python -m venv .venv
+pip install fastapi uvicorn
+```
+
+we will use:
+
+```bash
+uv init
+uv add fastapi uvicorn
+```
+
+Then, when we run the server, we will use:
+
+```bash
+uv run uvicorn main:app --reload
+```
+
+This makes the project setup more consistent and closer to a modern Python development workflow.
 
 ---
 
 ## Project Structure
 
-At the beginning, the project will look like this:
+After Step 0, the project will look like this:
 
 ```text
 mini-notes-server/
   README.md
   main.py
+  pyproject.toml
+  uv.lock
 ```
+
+You may also see:
+
+```text
+mini-notes-server/
+  .venv/
+```
+
+The `.venv` folder is the local virtual environment created by `uv`.  
+It should not be committed to GitHub.
 
 Later, we may add more files such as:
 
@@ -142,23 +190,63 @@ Later, we may add more files such as:
 mini-notes-server/
   README.md
   main.py
+  pyproject.toml
+  uv.lock
+  docs/
+    step-1-hello-fastapi-server.md
   notes.json
 ```
 
 ---
 
-# Step 0. Project Setup
+# Step 0. Project Setup with uv
 
 ## Goal
 
 The goal of Step 0 is to prepare a basic Python project for building a simple FastAPI server.
 
 In this step, we will not build the actual API yet.  
-We will only set up the project folder, create a Python virtual environment, install the required packages, and create the first Python file.
+We will set up the project folder, initialize the Python project with `uv`, install the required packages, and create the first Python file.
 
 ---
 
-## 1. Create a Project Folder
+## 1. Install uv
+
+First, make sure `uv` is installed.
+
+Check whether `uv` is available:
+
+```bash
+uv --version
+```
+
+If you see a version number, `uv` is already installed.
+
+If not, install `uv`.
+
+On Mac or Linux:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+After installing, close and reopen the terminal if needed.
+
+Then check again:
+
+```bash
+uv --version
+```
+
+---
+
+## 2. Create a Project Folder
 
 Open a terminal and move to the location where you want to create the project.
 
@@ -187,116 +275,108 @@ At this point, you should be inside the `mini-notes-server` folder.
 
 ---
 
-## 2. Create a Python Virtual Environment
+## 3. Initialize the Project with uv
 
-A virtual environment is an isolated Python environment for one project.
-
-This is useful because different Python projects may need different packages or different package versions.
-
-Create a virtual environment:
+Run:
 
 ```bash
-python -m venv .venv
+uv init
 ```
 
-This creates a folder named `.venv`.
+This initializes the folder as a Python project.
 
-That folder contains the Python environment for this project.
+It may create files such as:
 
-Your folder now looks something like this:
+```text
+pyproject.toml
+README.md
+main.py
+```
+
+The most important file is:
+
+```text
+pyproject.toml
+```
+
+This file stores project information and dependencies.
+
+If `uv init` creates a default `main.py`, you can keep it for now. We will replace its contents in Step 1.
+
+---
+
+## 4. Add FastAPI and Uvicorn
+
+Add the packages needed for this project:
+
+```bash
+uv add fastapi uvicorn
+```
+
+This does several things:
+
+```text
+Adds fastapi and uvicorn as project dependencies
+Updates pyproject.toml
+Creates or updates uv.lock
+Creates a local virtual environment if needed
+```
+
+After this step, your project should include:
+
+```text
+pyproject.toml
+uv.lock
+```
+
+The `uv.lock` file stores the exact resolved package versions.  
+This helps other developers install the same dependency versions.
+
+---
+
+## 5. Confirm the Project Environment
+
+Run:
+
+```bash
+uv run python --version
+```
+
+This runs Python inside the project environment managed by `uv`.
+
+Then run:
+
+```bash
+uv run python -c "import fastapi; print(fastapi.__version__)"
+```
+
+If this prints a FastAPI version number, FastAPI is installed correctly.
+
+---
+
+## 6. Check the Project Structure
+
+Your folder should now look something like this:
 
 ```text
 mini-notes-server/
-  .venv/
-```
-
----
-
-## 3. Activate the Virtual Environment
-
-Before installing packages, activate the virtual environment.
-
-On Mac or Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-On Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-After activation, your terminal may show something like this:
-
-```text
-(.venv) $
-```
-
-The `(.venv)` part means the virtual environment is active.
-
-From now on, when you install Python packages, they will be installed inside this project’s virtual environment instead of globally on your computer.
-
----
-
-## 4. Install FastAPI and Uvicorn
-
-Install the required packages:
-
-```bash
-pip install fastapi uvicorn
-```
-
-We are installing two packages:
-
-```text
-fastapi: the framework for building the API
-uvicorn: the program that runs the FastAPI server
-```
-
-To check whether they were installed, run:
-
-```bash
-pip list
-```
-
-You should see `fastapi` and `uvicorn` in the list.
-
----
-
-## 5. Create `main.py`
-
-Now create a Python file named `main.py`.
-
-On Mac or Linux:
-
-```bash
-touch main.py
-```
-
-On Windows:
-
-```bash
-type nul > main.py
-```
-
-You can also create this file manually in VS Code.
-
-Your folder structure should now look like this:
-
-```text
-mini-notes-server/
-  .venv/
   README.md
   main.py
+  pyproject.toml
+  uv.lock
 ```
 
-The `main.py` file will contain our FastAPI application code in the next step.
+You may also see:
+
+```text
+.venv/
+```
+
+That is the local virtual environment. It should stay on your computer and should not be committed to GitHub.
 
 ---
 
-## 6. Open the Project in VS Code
+## 7. Open the Project in VS Code
 
 If you use VS Code, run this command from inside the project folder:
 
@@ -306,35 +386,36 @@ code .
 
 This opens the current folder in VS Code.
 
-Make sure you can see these files and folders in the VS Code Explorer:
+Make sure you can see these files in the VS Code Explorer:
 
 ```text
-mini-notes-server
 README.md
 main.py
-.venv
+pyproject.toml
+uv.lock
 ```
 
 ---
 
-## Step 0 Completion Checklist
+## 8. Step 0 Completion Checklist
 
 You are done with Step 0 if you completed the following:
 
 ```text
+[ ] Installed uv
 [ ] Created the mini-notes-server folder
 [ ] Moved into the project folder
-[ ] Created a Python virtual environment named .venv
-[ ] Activated the virtual environment
-[ ] Installed fastapi and uvicorn
-[ ] Created main.py
-[ ] Created README.md
+[ ] Ran uv init
+[ ] Added fastapi and uvicorn using uv add
+[ ] Confirmed that pyproject.toml exists
+[ ] Confirmed that uv.lock exists
+[ ] Confirmed that FastAPI can be imported
 [ ] Opened the project in VS Code
 ```
 
 ---
 
-## Key Ideas to Understand
+## 9. Key Ideas to Understand
 
 By the end of Step 0, you should understand these basic ideas:
 
@@ -345,7 +426,11 @@ FastAPI is a Python framework for building web APIs.
 
 Uvicorn is used to run a FastAPI application.
 
-A virtual environment keeps Python packages isolated for one project.
+uv manages the Python project, dependencies, and virtual environment.
+
+pyproject.toml describes the Python project and its dependencies.
+
+uv.lock records the exact dependency versions.
 
 main.py will be the main file where we write our server code.
 
