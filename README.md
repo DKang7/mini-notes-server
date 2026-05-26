@@ -1,462 +1,355 @@
 # Mini Notes Server
 
-A small FastAPI practice project for learning basic backend server concepts.
+A small FastAPI practice project for learning basic backend server concepts and a professional development workflow.
 
-This project is not intended to be a full application yet.  
-The main goal is to understand how a simple Python web server works, how a client sends requests, and how the server returns responses.
+This project is not meant to be a full production application. The goal is to learn how a simple Python web server works, how clients send requests, how the server returns JSON responses, and how developers use branches and pull requests to manage work.
 
 ---
 
-## Learning Goals
+## Project Goals
 
-By working through this project, you will learn:
+By completing this project, you will learn:
 
-- What a server is
+- What a backend server is
+- What a client is
 - What an API is
-- How FastAPI works
-- How to create and run a simple Python web server
-- How a browser or client sends requests to a server
-- How the server returns JSON responses
-- How to manage a Python project using `uv`
-- How to organize a small backend project
+- What an endpoint is
+- How FastAPI routes HTTP requests to Python functions
+- How to return JSON responses
+- How to use path parameters
+- How to use query parameters
+- How to receive JSON request bodies
+- How to create data using `POST`
+- How to save simple data to a JSON file
+- How to use `uv` for Python project management
+- How to use branches, commits, pull requests, and code review
 
 ---
 
-## What Is a Server?
+## Tech Stack
 
-A server is a program that waits for requests and sends back responses.
+This project uses:
 
-For example, when you open a website in a browser, the browser sends a request to a server. The server receives the request, processes it, and sends back a response.
-
-A simplified version looks like this:
-
-```text
-Client or Browser  →  Request  →  Server
-Client or Browser  ←  Response ←  Server
-```
-
-In this project, our server will be a Python program.
-
-Later, when the server is running, we will be able to visit URLs such as:
-
-```text
-http://127.0.0.1:8000/hello
-http://127.0.0.1:8000/notes
-```
-
-When the browser visits one of those URLs, the FastAPI server will receive the request and return a response.
+- Python
+- FastAPI
+- Uvicorn
+- uv
+- JSON file storage
+- Git
+- GitHub
+- GitHub Projects / Kanban board
 
 ---
 
-## What Is an API?
+## What You Will Build
 
-API stands for Application Programming Interface.
+By the end of this module, you will build a small Notes API.
 
-In web development, an API is a way for one program to communicate with another program.
-
-For example:
+The final API will support:
 
 ```text
-Frontend app asks: "Give me all notes."
-Backend API responds: "Here is a list of notes in JSON."
-```
-
-In this project, we will build API endpoints such as:
-
-```text
-GET /health
-GET /hello
-GET /notes
+GET  /health
+GET  /hello
+GET  /notes
+GET  /notes?category=web
+GET  /notes/{note_id}
 POST /notes
 ```
 
-Each endpoint will be connected to a Python function.
-
----
-
-## What Is FastAPI?
-
-FastAPI is a Python framework for building web APIs.
-
-FastAPI lets us define routes using Python decorators.
-
-For example:
-
-```python
-@app.get("/hello")
-def hello():
-    return {"message": "Hello, FastAPI!"}
-```
-
-This means:
-
-```text
-When someone sends a GET request to /hello,
-run the hello() function,
-and return the result as JSON.
-```
-
-FastAPI is useful because it makes it easy to:
-
-- Create API endpoints
-- Receive data from requests
-- Return JSON responses
-- Validate input data
-- Generate automatic API documentation
-
----
-
-## What Is Uvicorn?
-
-FastAPI defines the web application, but we still need a program to actually run it.
-
-That is what Uvicorn does.
-
-You can think of it like this:
-
-```text
-FastAPI = the web app framework
-Uvicorn = the server runner that starts the FastAPI app
-```
-
-Later, we will run the server with:
-
-```bash
-uv run uvicorn main:app --reload
-```
-
----
-
-## What Is uv?
-
-`uv` is a modern Python project and package management tool.
-
-In this project, we will use `uv` to:
-
-- Create the Python project structure
-- Manage dependencies
-- Create and manage the virtual environment automatically
-- Run Python commands inside the project environment
-
-Instead of manually running:
-
-```bash
-python -m venv .venv
-pip install fastapi uvicorn
-```
-
-we will use:
-
-```bash
-uv init
-uv add fastapi uvicorn
-```
-
-Then, when we run the server, we will use:
-
-```bash
-uv run uvicorn main:app --reload
-```
-
-This makes the project setup more consistent and closer to a modern Python development workflow.
+The app will store notes in a simple `notes.json` file.
 
 ---
 
 ## Project Structure
 
-After Step 0, the project will look like this:
+The project will eventually look like this:
 
 ```text
 mini-notes-server/
   README.md
   main.py
-  pyproject.toml
-  uv.lock
-```
-
-You may also see:
-
-```text
-mini-notes-server/
-  .venv/
-```
-
-The `.venv` folder is the local virtual environment created by `uv`.  
-It should not be committed to GitHub.
-
-Later, we may add more files such as:
-
-```text
-mini-notes-server/
-  README.md
-  main.py
+  notes.json
   pyproject.toml
   uv.lock
   docs/
+    step-0-project-setup.md
     step-1-hello-fastapi-server.md
-  notes.json
+    step-2-get-notes.md
+    step-3-get-note-by-id.md
+    step-4-filter-notes.md
+    step-5-create-note.md
+    step-6-save-notes-to-json.md
 ```
 
----
-
-# Step 0. Project Setup with uv
-
-## Goal
-
-The goal of Step 0 is to prepare a basic Python project for building a simple FastAPI server.
-
-In this step, we will not build the actual API yet.  
-We will set up the project folder, initialize the Python project with `uv`, install the required packages, and create the first Python file.
-
----
-
-## 1. Install uv
-
-First, make sure `uv` is installed.
-
-Check whether `uv` is available:
-
-```bash
-uv --version
-```
-
-If you see a version number, `uv` is already installed.
-
-If not, install `uv`.
-
-On Mac or Linux:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-On Windows PowerShell:
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-After installing, close and reopen the terminal if needed.
-
-Then check again:
-
-```bash
-uv --version
-```
-
----
-
-## 2. Create a Project Folder
-
-Open a terminal and move to the location where you want to create the project.
-
-Then run:
-
-```bash
-mkdir mini-notes-server
-cd mini-notes-server
-```
-
-This creates a new folder called `mini-notes-server` and moves into it.
-
-Check your current location:
-
-```bash
-pwd
-```
-
-On Windows, you can use:
-
-```bash
-cd
-```
-
-At this point, you should be inside the `mini-notes-server` folder.
-
----
-
-## 3. Initialize the Project with uv
-
-Run:
-
-```bash
-uv init
-```
-
-This initializes the folder as a Python project.
-
-It may create files such as:
-
-```text
-pyproject.toml
-README.md
-main.py
-```
-
-The most important file is:
-
-```text
-pyproject.toml
-```
-
-This file stores project information and dependencies.
-
-If `uv init` creates a default `main.py`, you can keep it for now. We will replace its contents in Step 1.
-
----
-
-## 4. Add FastAPI and Uvicorn
-
-Add the packages needed for this project:
-
-```bash
-uv add fastapi uvicorn
-```
-
-This does several things:
-
-```text
-Adds fastapi and uvicorn as project dependencies
-Updates pyproject.toml
-Creates or updates uv.lock
-Creates a local virtual environment if needed
-```
-
-After this step, your project should include:
-
-```text
-pyproject.toml
-uv.lock
-```
-
-The `uv.lock` file stores the exact resolved package versions.  
-This helps other developers install the same dependency versions.
-
----
-
-## 5. Confirm the Project Environment
-
-Run:
-
-```bash
-uv run python --version
-```
-
-This runs Python inside the project environment managed by `uv`.
-
-Then run:
-
-```bash
-uv run python -c "import fastapi; print(fastapi.__version__)"
-```
-
-If this prints a FastAPI version number, FastAPI is installed correctly.
-
----
-
-## 6. Check the Project Structure
-
-Your folder should now look something like this:
-
-```text
-mini-notes-server/
-  README.md
-  main.py
-  pyproject.toml
-  uv.lock
-```
-
-You may also see:
+Some local files or folders may also exist:
 
 ```text
 .venv/
+.python-version
+.gitignore
 ```
 
-That is the local virtual environment. It should stay on your computer and should not be committed to GitHub.
+The `.venv/` folder should not be committed to GitHub.
 
 ---
 
-## 7. Open the Project in VS Code
+## Learning Steps
 
-If you use VS Code, run this command from inside the project folder:
+Follow the steps in order.
+
+| Step | Topic | What You Build |
+|---|---|---|
+| Step 0 | Project setup with `uv` | Initialize the Python project and install dependencies |
+| Step 1 | First FastAPI server | Create `/health` and `/hello` endpoints |
+| Step 2 | Return all notes | Create `GET /notes` |
+| Step 3 | Get one note by ID | Create `GET /notes/{note_id}` |
+| Step 4 | Filter notes | Add `GET /notes?category=web` |
+| Step 5 | Create a note | Add `POST /notes` |
+| Step 6 | Save notes to JSON | Persist notes in `notes.json` |
+
+Detailed instructions:
+
+- [Step 0. Project Setup with uv](docs/step-0-project-setup.md)
+- [Step 1. Run Your First FastAPI Server](docs/step-1-hello-fastapi-server.md)
+- [Step 2. Return a List of Notes](docs/step-2-get-notes.md)
+- [Step 3. Get One Note by ID](docs/step-3-get-note-by-id.md)
+- [Step 4. Filter Notes with Query Parameters](docs/step-4-filter-notes.md)
+- [Step 5. Create a Note with POST](docs/step-5-create-note.md)
+- [Step 6. Save Notes to a JSON File](docs/step-6-save-notes-to-json.md)
+
+---
+
+## Setup
+
+This project uses `uv`.
+
+To check whether `uv` is installed:
 
 ```bash
-code .
+uv --version
 ```
 
-This opens the current folder in VS Code.
+After cloning the repository, install dependencies with:
 
-Make sure you can see these files in the VS Code Explorer:
-
-```text
-README.md
-main.py
-pyproject.toml
-uv.lock
+```bash
+uv sync
 ```
 
----
+If dependencies have not been added yet, Step 0 will guide you through:
 
-## 8. Step 0 Completion Checklist
-
-You are done with Step 0 if you completed the following:
-
-```text
-[ ] Installed uv
-[ ] Created the mini-notes-server folder
-[ ] Moved into the project folder
-[ ] Ran uv init
-[ ] Added fastapi and uvicorn using uv add
-[ ] Confirmed that pyproject.toml exists
-[ ] Confirmed that uv.lock exists
-[ ] Confirmed that FastAPI can be imported
-[ ] Opened the project in VS Code
+```bash
+uv init
+uv add fastapi uvicorn
 ```
 
 ---
 
-## 9. Key Ideas to Understand
+## Running the Server
 
-By the end of Step 0, you should understand these basic ideas:
+After the FastAPI app has been created, run:
 
-```text
-A server is a program that waits for requests and sends responses.
-
-FastAPI is a Python framework for building web APIs.
-
-Uvicorn is used to run a FastAPI application.
-
-uv manages the Python project, dependencies, and virtual environment.
-
-pyproject.toml describes the Python project and its dependencies.
-
-uv.lock records the exact dependency versions.
-
-main.py will be the main file where we write our server code.
-
-README.md explains what the project is and how to set it up.
+```bash
+uv run uvicorn main:app --reload
 ```
 
-The most important idea is this:
+Then open:
 
 ```text
-We are preparing a Python program that will eventually run continuously as a server.
+http://127.0.0.1:8000
+```
 
-When a browser or client sends a request to it,
-our Python code will decide what response to send back.
+FastAPI automatically provides an API documentation page at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Use `/docs` to test the API endpoints.
+
+---
+
+## Development Workflow
+
+Do not commit directly to `main`.
+
+For each step:
+
+```text
+1. Move the task to In Progress on the Kanban board
+2. Create a new branch from main
+3. Complete the work
+4. Test locally
+5. Commit the changes
+6. Push the branch to GitHub
+7. Open a pull request into main
+8. Fill out the PR description
+9. Review with mentor
+10. Merge after approval
+11. Move the task to Done
+```
+
+Example branch names:
+
+```text
+step-0-project-setup
+step-1-hello-fastapi-server
+step-2-get-notes
+step-3-get-note-by-id
+step-4-filter-notes
+step-5-create-note
+step-6-save-notes-to-json
 ```
 
 ---
 
-## Next Step
+## Pull Request Template
 
-In Step 1, we will write the first FastAPI code and run the server locally.
+Each pull request should include:
 
-We will create simple endpoints such as:
+```markdown
+## Summary
 
-```text
-GET /health
-GET /hello
+What did you add or change?
+
+## Changes
+
+- List the main code or documentation changes
+
+## How I tested it
+
+Include the command you ran and the URLs you tested.
+
+## What I learned
+
+Write 2-3 sentences explaining what you learned.
 ```
 
-Then we will test them in the browser.
+---
+
+## Example PR Description
+
+```markdown
+## Summary
+
+Added a `GET /notes` endpoint that returns a list of sample notes.
+
+## Changes
+
+- Added a hardcoded `notes` list in `main.py`
+- Added `GET /notes`
+- Tested the endpoint in the browser
+- Tested the endpoint using FastAPI `/docs`
+
+## How I tested it
+
+I ran:
+
+```bash
+uv run uvicorn main:app --reload
+```
+
+Then I opened:
+
+```text
+http://127.0.0.1:8000/notes
+http://127.0.0.1:8000/docs
+```
+
+## What I learned
+
+I learned that FastAPI can automatically convert Python lists and dictionaries into JSON responses. I also learned that a backend endpoint can provide data to a client through a URL.
+```
+
+---
+
+## Kanban Board Workflow
+
+Use a GitHub Project board with these columns:
+
+```text
+Backlog
+Ready
+In Progress
+Review
+Done
+```
+
+A task should move like this:
+
+```text
+Ready → In Progress → Review → Done
+```
+
+A task is not considered done until:
+
+```text
+- The implementation works
+- The code has been pushed
+- A pull request has been opened
+- The PR has been reviewed
+- The PR has been merged
+```
+
+---
+
+## Completion Criteria
+
+This module is complete when:
+
+```text
+[ ] Steps 0 through 6 are completed
+[ ] Each step was done on a separate branch
+[ ] Each step has a pull request
+[ ] Each PR explains how it was tested
+[ ] The final app runs locally
+[ ] The final API works in /docs
+[ ] Notes persist after restarting the server
+[ ] Student can explain the full request/response flow
+```
+
+---
+
+## Final Demo
+
+At the end of this module, prepare a short demo.
+
+The demo should show:
+
+- GitHub repository
+- Kanban board
+- Pull requests
+- Running FastAPI server
+- FastAPI `/docs` page
+- `GET /health`
+- `GET /hello`
+- `GET /notes`
+- `GET /notes/{note_id}`
+- `GET /notes?category=web`
+- `POST /notes`
+- `notes.json`
+- Notes still existing after server restart
+
+The student should be able to explain:
+
+```text
+A client sends an HTTP request.
+FastAPI matches the request to an endpoint.
+The Python function runs.
+The function reads or creates data.
+The server returns JSON.
+Data can be stored in memory or persisted in a file.
+```
+
+---
+
+## Future Extensions
+
+After this module, possible next steps include:
+
+- Use proper HTTP status codes with `HTTPException`
+- Add `DELETE /notes/{note_id}`
+- Add `PUT` or `PATCH /notes/{note_id}`
+- Move from `notes.json` to SQLite
+- Add automated tests
+- Build a small frontend that calls this API
+- Deploy the API to a cloud server
