@@ -4,20 +4,240 @@
 
 The goal of this step is to set up a basic Python project for building a simple FastAPI server.
 
-In this step, you will:
+Before writing any code, we will first understand a few basic backend concepts:
 
-- Install or confirm `uv`
-- Create the project folder
-- Initialize a Python project using `uv`
-- Add FastAPI and Uvicorn as dependencies
-- Confirm that the project environment works
-- Open the project in VS Code
+- What is a server?
+- What is an API?
+- What is FastAPI?
+- What is Uvicorn?
+- What is uv?
 
-We will not build the actual API yet. That starts in Step 1.
+Then we will set up the project using `uv`.
+
+By the end of this step, you should have a Python project ready for Step 1.
 
 ---
 
-## What Is uv?
+# 1. What Is a Server?
+
+A server is a program that waits for requests and sends back responses.
+
+For example, when you open a website in a browser, your browser sends a request to a server. The server receives the request, processes it, and sends back a response.
+
+A simplified version looks like this:
+
+```text
+Client or Browser  →  Request  →  Server
+Client or Browser  ←  Response ←  Server
+```
+
+In this project, our server will be a Python program.
+
+Later, when the server is running, we will be able to visit URLs such as:
+
+```text
+http://127.0.0.1:8000/hello
+http://127.0.0.1:8000/notes
+```
+
+When the browser visits one of those URLs, the FastAPI server will receive the request and return a response.
+
+The important idea is:
+
+```text
+A server is not just a file.
+A server is a running program.
+It must be running in order to respond to requests.
+```
+
+---
+
+# 2. What Is a Client?
+
+A client is a program that sends requests to a server.
+
+Examples of clients include:
+
+```text
+Web browser
+Mobile app
+Frontend web app
+curl
+Postman
+Another backend service
+```
+
+In this project, we will mostly use the browser and FastAPI’s `/docs` page as our clients.
+
+Later, a frontend application could also become a client of this API.
+
+---
+
+# 3. What Is an API?
+
+API stands for Application Programming Interface.
+
+In web development, an API is a way for one program to communicate with another program.
+
+For example:
+
+```text
+Frontend app asks: "Give me all notes."
+Backend API responds: "Here is a list of notes in JSON."
+```
+
+A web API usually exposes endpoints such as:
+
+```text
+GET /notes
+GET /notes/1
+POST /notes
+```
+
+Each endpoint represents an action the client can ask the server to perform.
+
+In this project, we will eventually build endpoints such as:
+
+```text
+GET /health
+GET /hello
+GET /notes
+GET /notes/{note_id}
+GET /notes?category=web
+POST /notes
+```
+
+---
+
+# 4. What Is an Endpoint?
+
+An endpoint is a specific URL path that the server responds to.
+
+For example:
+
+```text
+GET /hello
+```
+
+means:
+
+```text
+When the client sends a GET request to /hello,
+the server should run the code connected to /hello
+and return a response.
+```
+
+In FastAPI, an endpoint will look like this:
+
+```python
+@app.get("/hello")
+def hello():
+    return {"message": "Hello, FastAPI!"}
+```
+
+This means:
+
+```text
+When someone sends a GET request to /hello,
+run the hello() function,
+and return the result as JSON.
+```
+
+---
+
+# 5. What Is JSON?
+
+JSON is a common format for sending data between a client and a server.
+
+It looks similar to a Python dictionary, but it is a text format used across many programming languages.
+
+Example JSON response:
+
+```json
+{
+  "message": "Hello, FastAPI!"
+}
+```
+
+Example list of notes:
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Learn FastAPI",
+    "category": "study"
+  },
+  {
+    "id": 2,
+    "title": "What is a server?",
+    "category": "concept"
+  }
+]
+```
+
+In this project, our FastAPI server will return JSON responses.
+
+---
+
+# 6. What Is FastAPI?
+
+FastAPI is a Python framework for building web APIs.
+
+FastAPI helps us:
+
+- Create API endpoints
+- Connect URL paths to Python functions
+- Receive data from requests
+- Return JSON responses
+- Validate input data
+- Generate automatic API documentation
+
+Example:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/hello")
+def hello():
+    return {"message": "Hello, FastAPI!"}
+```
+
+This creates a small web API with one endpoint:
+
+```text
+GET /hello
+```
+
+---
+
+# 7. What Is Uvicorn?
+
+FastAPI defines the web application, but we still need a program to actually run it as a server.
+
+That is what Uvicorn does.
+
+You can think of it like this:
+
+```text
+FastAPI = the framework for defining the API
+Uvicorn = the server program that runs the FastAPI app
+```
+
+Later, we will run the server with:
+
+```bash
+uv run uvicorn main:app --reload
+```
+
+This starts the server locally so your browser can send requests to it.
+
+---
+
+# 8. What Is uv?
 
 `uv` is a modern Python project and package management tool.
 
@@ -48,52 +268,41 @@ This gives us a cleaner and more professional Python project workflow.
 
 ---
 
-## What Is FastAPI?
+# 9. Expected Final Project Structure
 
-FastAPI is a Python framework for building web APIs.
-
-A web API lets one program communicate with another program over HTTP.
-
-For example:
+After Step 0, the project should look something like this:
 
 ```text
-Client asks:  GET /notes
-Server sends: JSON list of notes
+mini-notes-server/
+  README.md
+  main.py
+  pyproject.toml
+  uv.lock
+  docs/
+    step-0-project-setup.md
 ```
 
-Later in this project, we will create API endpoints such as:
+You may also see:
 
 ```text
-GET /health
-GET /hello
-GET /notes
-POST /notes
+.venv/
+.python-version
+.gitignore
 ```
+
+That is okay.
+
+Important:
+
+```text
+.venv/ should not be committed to GitHub.
+```
+
+The `.venv` folder is the local Python environment created by `uv`.
 
 ---
 
-## What Is Uvicorn?
-
-FastAPI defines the web application, but we need something to actually run it as a server.
-
-That is what Uvicorn does.
-
-You can think of it like this:
-
-```text
-FastAPI = the framework for defining the API
-Uvicorn = the server program that runs the FastAPI app
-```
-
-Later, we will run the server with:
-
-```bash
-uv run uvicorn main:app --reload
-```
-
----
-
-# 1. Check Whether uv Is Installed
+# 10. Check Whether uv Is Installed
 
 Open a terminal and run:
 
@@ -113,7 +322,7 @@ If the command does not work, install `uv`.
 
 ---
 
-# 2. Install uv If Needed
+# 11. Install uv If Needed
 
 ## Mac or Linux
 
@@ -149,7 +358,7 @@ uv --version
 
 ---
 
-# 3. Create the Project Folder
+# 12. Create the Project Folder
 
 Move to the location where you want to create the project.
 
@@ -182,7 +391,7 @@ mini-notes-server
 
 ---
 
-# 4. Initialize the Project with uv
+# 13. Initialize the Project with uv
 
 Inside the `mini-notes-server` folder, run:
 
@@ -212,7 +421,7 @@ This file describes the Python project and its dependencies.
 
 ---
 
-# 5. Add FastAPI and Uvicorn
+# 14. Add FastAPI and Uvicorn
 
 Run:
 
@@ -235,7 +444,7 @@ The `uv.lock` file records the exact dependency versions so the project can be r
 
 ---
 
-# 6. Confirm the Project Environment Works
+# 15. Confirm the Project Environment Works
 
 Run:
 
@@ -255,7 +464,7 @@ If FastAPI is installed correctly, this should print a FastAPI version number.
 
 ---
 
-# 7. Check the Project Structure
+# 16. Check the Project Structure
 
 Your project should now look something like this:
 
@@ -297,7 +506,7 @@ docs/
 
 ---
 
-# 8. Open the Project in VS Code
+# 17. Open the Project in VS Code
 
 From inside the project folder, run:
 
@@ -318,7 +527,7 @@ uv.lock
 
 ---
 
-# 9. Optional: Run the Default main.py
+# 18. Optional: Run the Default main.py
 
 Depending on what `uv init` created, `main.py` may contain a simple default program.
 
@@ -334,7 +543,7 @@ In Step 1, we will replace the contents of `main.py` with FastAPI server code.
 
 ---
 
-# 10. Commit the Step 0 Setup
+# 19. Commit the Step 0 Setup
 
 Check the current Git status:
 
@@ -364,7 +573,7 @@ git push -u origin step-0-project-setup
 
 ---
 
-# 11. Open a Pull Request
+# 20. Open a Pull Request
 
 Open a pull request from:
 
@@ -415,11 +624,12 @@ Write 2-3 sentences about what you learned.
 
 ---
 
-# 12. Step 0 Completion Checklist
+# 21. Step 0 Completion Checklist
 
 You are done with Step 0 if you completed the following:
 
 ```text
+[ ] Read the sections about server, client, API, endpoint, JSON, FastAPI, Uvicorn, and uv
 [ ] Confirmed uv is installed
 [ ] Created the mini-notes-server folder
 [ ] Initialized the project with uv init
@@ -436,30 +646,49 @@ You are done with Step 0 if you completed the following:
 
 ---
 
-# 13. Questions to Answer
+# 22. Questions to Answer
 
 Before moving to Step 1, make sure you can answer these questions:
 
 ```text
-1. What is uv?
-2. What does uv init do?
-3. What does uv add fastapi uvicorn do?
-4. What is pyproject.toml used for?
-5. What is uv.lock used for?
-6. What does uv run do?
-7. What is FastAPI?
-8. What is Uvicorn?
-9. Why should .venv not be committed to GitHub?
-10. Why do we use a branch and pull request for this step?
+1. What is a server?
+2. What is a client?
+3. What is an API?
+4. What is an endpoint?
+5. What is JSON?
+6. What is FastAPI?
+7. What is Uvicorn?
+8. What is uv?
+9. What does uv init do?
+10. What does uv add fastapi uvicorn do?
+11. What is pyproject.toml used for?
+12. What is uv.lock used for?
+13. What does uv run do?
+14. Why should .venv not be committed to GitHub?
+15. Why do we use a branch and pull request for this step?
 ```
 
 ---
 
-# 14. Key Ideas
+# 23. Key Ideas
 
 The most important ideas from this step are:
 
 ```text
+A server is a running program that waits for requests and sends responses.
+
+A client sends requests to a server.
+
+An API is a way for programs to communicate.
+
+An endpoint is a specific URL path the server responds to.
+
+JSON is a common data format for API responses.
+
+FastAPI is used to build the API.
+
+Uvicorn is used to run the FastAPI server.
+
 uv manages the Python project environment and dependencies.
 
 pyproject.toml describes the project and its dependencies.
@@ -467,10 +696,6 @@ pyproject.toml describes the project and its dependencies.
 uv.lock records exact dependency versions.
 
 uv run runs commands inside the project environment.
-
-FastAPI is used to build the API.
-
-Uvicorn is used to run the FastAPI server.
 
 This project will use branches and pull requests for each step.
 ```
